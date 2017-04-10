@@ -56,7 +56,10 @@ function getPostsCallback(response){
 
   postData.forEach(function (element){
     console.log('song links: ' + element.message);
-    soundCloudLinks.push(element.message);    
+    soundCloudLinks.push(element.message);
+    SC.oEmbed(element.message, {maxheight: 200}, function(res) {
+      document.getElementById("player").appendChild(res.html);      
+    });    
   });
   console.log('song links: ' + soundCloudLinks);
   
@@ -68,9 +71,9 @@ function getPostsCallback(response){
   //   console.log(res.html);
   //   document.getElementById("player").appendChild(res.html);
   // });
-    var trackUrl = 'https://soundcloud.com/mureed-abbas-shah/sami-meri-waar-by-qb-umair';
-    SC.oEmbed(trackUrl, {maxheight: 200}, document.getElementById("player"));
-      // $("#player").html(res.html);
-      console.log(res.html);
-      // document.getElementById("player").appendChild(res.html);
+    // var trackUrl = 'https://soundcloud.com/mureed-abbas-shah/sami-meri-waar-by-qb-umair';
+    // SC.oEmbed(trackUrl, {maxheight: 200}, document.getElementById("player"));
+    //   // $("#player").html(res.html);
+    // console.log(res.html);
+    // document.getElementById("player").appendChild(res.html);
 }
