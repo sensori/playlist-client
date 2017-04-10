@@ -58,9 +58,9 @@ function getPostsCallback(response){
     console.log('song links: ' + element.message);
     soundCloudLinks.push(element.message);
     SC.oEmbed(element.message, {maxheight: 200}, function(res) {
-      var player = document.getElementById("player");
-      // document.getElementById("player").appendChild(res.html);      
-      player.appendChild(res.html);      
+      var div = document.createElement("div");
+      div.innerHTML = res.html;
+      document.getElementById("player").appendChild(div);                  
     });    
   });
   console.log('song links: ' + soundCloudLinks);
