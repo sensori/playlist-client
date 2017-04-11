@@ -76,7 +76,7 @@ function getPosts(){
   console.log('call back')
   var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
   if (dateRangeSelected == true) {
-    theUrl += "?since=" + startDate + "&until=" + endDate;
+    theUrl += "?since=" + startDate.toISOString() + "&until=" + endDate.toISOString();
   }
   var request = httpGetAsync(theUrl, getPostsCallback)
 }
