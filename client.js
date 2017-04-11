@@ -28,10 +28,38 @@
 //     });
 //   });
 // })
+
+var startDate = new Date();
+var endDate = new Date();
+var dateRangeSelected = false;
   // initialization
   SC.initialize({
     client_id: "15c5a12b5d640af73b16bd240753ffbb"
   });
+
+// daterange picker
+$(function() {
+
+  $('input[name="datefilter"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+      startDate = picker.startDate;
+      endDate = picker.endDate;
+      dateRangeSelected = true;
+  });
+
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+      dateRangeSelected = false;
+  });
+
+});
 
 function httpGetAsync(theUrl, callback)
 {  
@@ -47,6 +75,9 @@ function httpGetAsync(theUrl, callback)
 function getPosts(){ 
   console.log('call back')
   var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
+  if (dateRangeSelected == true) {
+    theUrl += "?since=" + startDate + "&until=" + endDate;
+  }
   var request = httpGetAsync(theUrl, getPostsCallback)
 }
 
@@ -56,7 +87,7 @@ function getPostsCallback(response){
   var soundCloudLinks = [];
 
   postData.forEach(function (element){
-    console.log('song links: ' + element.message);
+    console.log('song links: ' + element.links);
     if (element.link != null && element.link.includes('soundcloud.com')) {
       soundCloudLinks.push(element.link);
       SC.oEmbed(element.link, {maxheight: 200}, function(res) {
