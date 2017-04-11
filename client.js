@@ -51,6 +51,7 @@ function getPosts(){
 }
 
 function getPostsCallback(response){
+  console.log('postData: ' + response)
   var postData = JSON.parse(response); // array of JSON'ed posts
   var soundCloudLinks = [];
 
