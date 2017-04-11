@@ -55,7 +55,7 @@ $(function() {
   });
 
   $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
-      $(this).val('');
+      $(this).val('choose a date range');
       dateRangeSelected = false;
   });
 
