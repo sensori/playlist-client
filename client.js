@@ -46,7 +46,7 @@ function httpGetAsync(theUrl, callback)
 
 function getPosts(){ 
   console.log('call back')
-  var theUrl = "https://peaceful-plateau-86783.herokuapp.com/"
+  var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
   var request = httpGetAsync(theUrl, getPostsCallback)
 }
 
@@ -56,12 +56,14 @@ function getPostsCallback(response){
 
   postData.forEach(function (element){
     console.log('song links: ' + element.message);
-    soundCloudLinks.push(element.message);
-    SC.oEmbed(element.message, {maxheight: 200}, function(res) {
-      var div = document.createElement("div");
-      div.innerHTML = res.html;
-      document.getElementById("player").appendChild(div);                  
-    });    
+    if (element.link != null && element.link.includes('soundcloud.com')) {
+      soundCloudLinks.push(element.link);
+      SC.oEmbed(element.link, {maxheight: 200}, function(res) {
+        var div = document.createElement("div");
+        div.innerHTML = res.html;
+        document.getElementById("player").appendChild(div);                  
+      });
+    }    
   });
   console.log('song links: ' + soundCloudLinks);
   
