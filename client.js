@@ -109,9 +109,9 @@ function getPostsCallback(response){
         widgetDiv.innerHTML = res.html;
         var widget = SC.Widget(widgetDiv.children[0]);
         widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(element.link)});
-        if (parseInt(widgetDiv.id) == 0){
-          widget.bind(SC.Widget.Events.READY, firstWidgetReady);
-        }
+        // if (parseInt(widgetDiv.id) == 0){ // may not need this?
+        //   widget.bind(SC.Widget.Events.READY, firstWidgetReady);
+        // }
         scWidgets[widgetDiv.id] = widget; // tie the widget to div's ID
       });
       document.getElementById("player").appendChild(div);
@@ -120,9 +120,9 @@ function getPostsCallback(response){
   });
   console.log('song links: ' + soundCloudLinks);
   
-function firstWidgetReady(){
-  scWidgets[0].play();
-}
+// function firstWidgetReady(){
+//   scWidgets[0].play();
+// }
 
   // call play on the next (sequential) widget
   // TODO: check if last track
