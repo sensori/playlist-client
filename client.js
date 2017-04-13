@@ -134,6 +134,9 @@ function getPostsCallback(response){
     var numId = parseInt(div.id);
     var nextId = numId + 1;    
     scWidgets[nextId.toString()].play();
+
+    // scroll player into view at top if not on screen
+    $(div.id)[0].scrollIntoView( true );
   }
 
   // soundcloud widget stuff
