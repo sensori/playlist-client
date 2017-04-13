@@ -96,7 +96,7 @@ function getPostsCallback(response){
   postData.forEach(function (element){
     console.log('song links: ' + element.links);
     if (element.link != null && element.link.includes('soundcloud.com')) {
-      dictionary[element.link] = div; // add div to the dictionary for async access to correct div
+      widgetToDiv[element.link] = div; // add div to the dictionary for async access to correct div
       soundCloudLinks.push(element.link);      
       
       var div = document.createElement("div");            
@@ -105,7 +105,7 @@ function getPostsCallback(response){
       
       SC.oEmbed(element.link, {maxheight: 200}, function(res) { // async call
         // set the new divs html, bind to events, and save reference to widget
-        var widgetDiv = dictionary[element.link];
+        var widgetDiv = widgetToDiv[element.link];
         widgetDiv.innerHTML = res.html;
         var widget = SC.Widget(widgetDiv.children[0]);
         widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(element.link)});
