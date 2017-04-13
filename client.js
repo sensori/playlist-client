@@ -35,7 +35,7 @@ var SC=SC||{};SC.Widget=function(n){function t(r){if(e[r])return e[r].exports;va
 var startDate = new Date();
 var endDate = new Date();
 var dateRangeSelected = false;
-var scWidgets = []; // holds all the widgets loaded onto the page 
+var scWidgets = {}; // holds all the widgets loaded onto the page 
 var widgetToDiv = {}; // dictionary for widgets to their parent divs, key is the soundcloud URL
 var divCollection = []; // array of divs
   // initialization
@@ -102,17 +102,17 @@ function getPostsCallback(response){
       div.id = ctr.toString(); // so we know sequentially which div this is
       divCollection.push(div); // keep a collection of divs to play sequentially
       widgetToDiv[element.link] = div; // add div to the dictionary for async access to correct div
-      
+
       SC.oEmbed(element.link, {maxheight: 200}, function(res) { // async call
         // set the new divs html, bind to events, and save reference to widget
         var widgetDiv = widgetToDiv[element.link];
         widgetDiv.innerHTML = res.html;
         var widget = SC.Widget(widgetDiv.children[0]);
         widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(element.link)});
-        if (parseIn(widgetDiv.id) == 0){
+        if (parseInt(widgetDiv.id) == 0){
           widget.bind(SC.Widget.Events.READY, firstWidgetReady);
         }
-        scWidgets[parseInt(widgetDiv.id)] = widgetDiv.children[0]; //
+        scWidgets[widgetDiv.id] = widget; // tie the widget to div's ID
       });
       document.getElementById("player").appendChild(div);
       ctr++;
@@ -129,7 +129,11 @@ function firstWidgetReady(){
   function widgetFinished(soundCloudUrl){    
     // get the div for the given url
     div = widgetToDiv[soundCloudUrl];
-    scWidgets[parseInt(div.id)+1].play();
+
+    // get the next player ID
+    var numId = parseInt(div.id);
+    var nextId = numId + 1;    
+    scWidgets[nextId.toString()].play();
   }
 
   // soundcloud widget stuff
