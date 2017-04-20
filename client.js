@@ -38,10 +38,22 @@ var dateRangeSelected = false;
 var scWidgets = {}; // holds all the widgets loaded onto the page 
 var widgetToDiv = {}; // dictionary for widgets to their parent divs, key is the soundcloud URL
 var divCollection = []; // array of divs
+var selectedMemberId = "";  // holds the ID of the selected group member
+var memberSelected = false; // flag to check if user filtered by group member
+
   // initialization
   SC.initialize({
     client_id: "15c5a12b5d640af73b16bd240753ffbb"
   });
+
+// get all members on load and fill drop-down list
+// $(document).ready(function(){
+//   $('.combobox').combobox();
+// });
+
+console.log('get members')
+var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getMembers"
+var request = httpGetAsync(theUrl, getMembersCallback)
 
 // daterange picker
 $(function() {
@@ -65,6 +77,17 @@ $(function() {
       dateRangeSelected = false;
   });
 
+  // $('#memberList').on('change', function (e) {
+  //   var optionSelected = $("option:selected", this);
+  //   var valueSelected = this.value;
+  //   if (this.value != "") { // could have the blank option
+  //     memberSelected = true; 
+  //   }
+  //   else {
+  //     memberSelected = false;
+  //   }   
+// });
+
 });
 
 function httpGetAsync(theUrl, callback)
@@ -84,11 +107,40 @@ function getPosts(){
   if (dateRangeSelected == true) {
     theUrl += "?since=" + startDate.toISOString() + "&until=" + endDate.toISOString();
   }
+
+  // check if user has selected a certain member
+  var memberList = document.getElementById("memberList");
+  var selected = memberList.options[memberList.selectedIndex];
+  if (selected != null && selected.value != "") { // check if it's the empty option
+    selectedMemberId = selected.value; // save the id for filtering posts
+    if (dateRangeSelected == true) {
+      theUrl += "&memberId=" + selectedMemberId;
+    }
+    else {
+      theUrl += "?memberId=" + selectedMemberId;
+    }
+  }
+
   var request = httpGetAsync(theUrl, getPostsCallback)
 }
 
+function getMembersCallback(response){  
+  var membersData = JSON.parse(response); // array of JSON'ed posts
+  console.log(membersData);
+  var memberList = document.getElementById("memberList");   
+
+  for (var i = 0; i < membersData.length; i++){    
+    var listOption = document.createElement("option");
+    listOption.textContent = membersData[i].name;
+    listOption.value = membersData[i].id;
+    memberList.appendChild(listOption);
+  }
+  $('.combobox').combobox();
+}
+
+// TODO: rename element to post
 function getPostsCallback(response){
-  console.log('postData: ' + response)
+  console.log('postData: ' + response);
   var postData = JSON.parse(response); // array of JSON'ed posts
   var soundCloudLinks = [];
   var ctr = 0;  
@@ -96,26 +148,29 @@ function getPostsCallback(response){
   postData.forEach(function (element){
     console.log('song links: ' + element.links);
     if (element.link != null && element.link.includes('soundcloud.com')) {
-      soundCloudLinks.push(element.link);      
-      
-      var div = document.createElement("div");            
-      div.id = ctr.toString(); // so we know sequentially which div this is
-      divCollection.push(div); // keep a collection of divs to play sequentially
-      widgetToDiv[element.link] = div; // add div to the dictionary for async access to correct div
+      if (selectedMemberId == "" || 
+      (selectedMemberId != "" && selectedMemberId == element.from.id)) { // filter by member ID if user has selected one
+        soundCloudLinks.push(element.link);      
+        
+        var div = document.createElement("div");            
+        div.id = ctr.toString(); // so we know sequentially which div this is
+        divCollection.push(div); // keep a collection of divs to play sequentially
+        widgetToDiv[element.link] = div; // add div to the dictionary for async access to correct div
 
-      SC.oEmbed(element.link, {maxheight: 200}, function(res) { // async call
-        // set the new divs html, bind to events, and save reference to widget
-        var widgetDiv = widgetToDiv[element.link];
-        widgetDiv.innerHTML = res.html;
-        var widget = SC.Widget(widgetDiv.children[0]);
-        widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(element.link)});
-        // if (parseInt(widgetDiv.id) == 0){ // may not need this?
-        //   widget.bind(SC.Widget.Events.READY, firstWidgetReady);
-        // }
-        scWidgets[widgetDiv.id] = widget; // tie the widget to div's ID
-      });
-      document.getElementById("player").appendChild(div);
-      ctr++;
+        SC.oEmbed(element.link, {maxheight: 200}, function(res) { // async call
+          // set the new divs html, bind to events, and save reference to widget
+          var widgetDiv = widgetToDiv[element.link];
+          widgetDiv.innerHTML = res.html;
+          var widget = SC.Widget(widgetDiv.children[0]);
+          widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(element.link)});
+          // if (parseInt(widgetDiv.id) == 0){ // may not need this?
+          //   widget.bind(SC.Widget.Events.READY, firstWidgetReady);
+          // }
+          scWidgets[widgetDiv.id] = widget; // tie the widget to div's ID
+        });
+        document.getElementById("player").appendChild(div);
+        ctr++;
+      }
     }    
   });
   console.log('song links: ' + soundCloudLinks);

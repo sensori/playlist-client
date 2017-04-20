@@ -25,6 +25,10 @@
     <!-- Include Date Range Picker -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+	  
+    <link href="css/bootstrap-combobox.css" rel="stylesheet">
+    <script src="js/bootstrap-combobox.js"></script>
+
     <script src="https://connect.soundcloud.com/sdk.js"></script>   
     <script src="client.js"></script> 
   </head>
@@ -42,15 +46,18 @@
                   <li><a href="https://www.facebook.com/groups/509631155753788/">contact</a></li>
                 </ul>
               </nav>
-			  <br></br>
+			  <br/>
 				<img src="assets/images/disciples_cover.jpg" width="300" align="center" alt=""
 					title="'Disciples' logo by Vlad Loshkin">
             </div>
           </div>
           <div class="inner cover">
-            <h3 class="cover-heading">followers of quality music.</h1>
-			           <br></br>
-                 <br></br>                 
+            <h3 class="cover-heading">followers of quality music.</h3>
+			           <br/>
+                 <br/>                 
+            <select class="combobox" id="memberList">
+              <option></option>
+            </select>
             <input type="text" name="datefilter" value="choose a date range" /><br/>
             <input type="button" class="btn btn-lg btn-info" value="load some tunes" onclick="getPosts()">
           </div>
