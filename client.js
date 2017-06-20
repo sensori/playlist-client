@@ -138,7 +138,6 @@ function getMembersCallback(response){
   $('.combobox').combobox();
 }
 
-// TODO: rename element to post
 function getPostsCallback(response){
   console.log('postData: ' + response);
   var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
@@ -146,13 +145,13 @@ function getPostsCallback(response){
   var soundCloudLinks = [];
   var ctr = 0;  
 
-  // check if we have paged results  
-  if (responseData.paging.next != null) {
-    // if so, request the next page
-    var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
-    theUrl += "?nextpage=" + responseData.paging.next; // send back the graph request for the next page
-    var request = httpGetAsync(theUrl, getPostsCallback);
-  }
+  // // check if we have paged results  
+  // if (responseData.paging.next != null) {
+  //   // if so, request the next page
+  //   var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
+  //   theUrl += "?nextpage=" + responseData.paging.next; // send back the graph request for the next page
+  //   var request = httpGetAsync(theUrl, getPostsCallback);
+  // }
   postData.forEach(function (post){
     console.log('song links: ' + post.links);
     if (post.link != null && post.link.includes('soundcloud.com')) {
