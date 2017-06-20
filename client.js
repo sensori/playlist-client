@@ -141,10 +141,18 @@ function getMembersCallback(response){
 // TODO: rename element to post
 function getPostsCallback(response){
   console.log('postData: ' + response);
-  var postData = JSON.parse(response); // array of JSON'ed posts
+  var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
+  var postData = response.feed;
   var soundCloudLinks = [];
   var ctr = 0;  
 
+  // check if we have paged results  
+  if (responseData.paging.next != null) {
+    // if so, request the next page
+    var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
+    theUrl += "?nextpage=" + responseData.paging.next; // send back the graph request for the next page
+    var request = httpGetAsync(theUrl, getPostsCallback);
+  }
   postData.forEach(function (element){
     console.log('song links: ' + element.links);
     if (element.link != null && element.link.includes('soundcloud.com')) {
