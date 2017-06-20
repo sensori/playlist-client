@@ -142,7 +142,7 @@ function getMembersCallback(response){
 function getPostsCallback(response){
   console.log('postData: ' + response);
   var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
-  var postData = responseData.feed;
+  var postData = responseData.data;
   var soundCloudLinks = [];
   var ctr = 0;  
 
@@ -153,24 +153,24 @@ function getPostsCallback(response){
     theUrl += "?nextpage=" + responseData.paging.next; // send back the graph request for the next page
     var request = httpGetAsync(theUrl, getPostsCallback);
   }
-  postData.forEach(function (element){
-    console.log('song links: ' + element.links);
-    if (element.link != null && element.link.includes('soundcloud.com')) {
+  postData.forEach(function (post){
+    console.log('song links: ' + post.links);
+    if (post.link != null && post.link.includes('soundcloud.com')) {
       if (selectedMemberId == "" || 
-      (selectedMemberId != "" && selectedMemberId == element.from.id)) { // filter by member ID if user has selected one
-        soundCloudLinks.push(element.link);      
+      (selectedMemberId != "" && selectedMemberId == post.from.id)) { // filter by member ID if user has selected one
+        soundCloudLinks.push(post.link);      
         
         var div = document.createElement("div");            
         div.id = ctr.toString(); // so we know sequentially which div this is
         divCollection.push(div); // keep a collection of divs to play sequentially
-        widgetToDiv[element.link] = div; // add div to the dictionary for async access to correct div
+        widgetToDiv[post.link] = div; // add div to the dictionary for async access to correct div
 
-        SC.oEmbed(element.link, {maxheight: 200}, function(res) { // async call
+        SC.oEmbed(post.link, {maxheight: 200}, function(res) { // async call
           // set the new divs html, bind to events, and save reference to widget
-          var widgetDiv = widgetToDiv[element.link];
+          var widgetDiv = widgetToDiv[post.link];
           widgetDiv.innerHTML = res.html;
           var widget = SC.Widget(widgetDiv.children[0]);
-          widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(element.link)});
+          widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(post.link)});
           // if (parseInt(widgetDiv.id) == 0){ // may not need this?
           //   widget.bind(SC.Widget.Events.READY, firstWidgetReady);
           // }
