@@ -142,7 +142,7 @@ function getMembersCallback(response){
 function getPostsCallback(response){
   console.log('postData: ' + response);
   var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
-  var postData = response.feed;
+  var postData = responseData.feed;
   var soundCloudLinks = [];
   var ctr = 0;  
 
