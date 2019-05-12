@@ -109,17 +109,18 @@ function getPosts(){
   }
 
   // check if user has selected a certain member
-  var memberList = document.getElementById("memberList");
-  var selected = memberList.options[memberList.selectedIndex];
-  if (selected != null && selected.value != "") { // check if it's the empty option
-    selectedMemberId = selected.value; // save the id for filtering posts
-    if (dateRangeSelected == true) {
-      theUrl += "&memberId=" + selectedMemberId;
-    }
-    else {
-      theUrl += "?memberId=" + selectedMemberId;
-    }
-  }
+  // deprecated by facebook
+  // var memberList = document.getElementById("memberList");
+  // var selected = memberList.options[memberList.selectedIndex];
+  // if (selected != null && selected.value != "") { // check if it's the empty option
+  //   selectedMemberId = selected.value; // save the id for filtering posts
+  //   if (dateRangeSelected == true) {
+  //     theUrl += "&memberId=" + selectedMemberId;
+  //   }
+  //   else {
+  //     theUrl += "?memberId=" + selectedMemberId;
+  //   }
+  // }
 
   var request = httpGetAsync(theUrl, getPostsCallback)
 }
