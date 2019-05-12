@@ -125,8 +125,8 @@ function getPosts(){
 }
 
 function responseErrorCheck(response){
-  if (res.error != null && res.error.message) {
-    console.log(res.error.message);
+  if (response.error != null && response.error.message) {
+    console.log(response.error.message);
     return true;
   }
   return false;
