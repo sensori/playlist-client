@@ -51,9 +51,9 @@ var memberSelected = false; // flag to check if user filtered by group member
 //   $('.combobox').combobox();
 // });
 
-console.log('get members')
-var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getMembers"
-var request = httpGetAsync(theUrl, getMembersCallback)
+// members edge was deprecated
+// var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getMembers"
+// var request = httpGetAsync(theUrl, getMembersCallback)
 
 // daterange picker
 $(function() {
