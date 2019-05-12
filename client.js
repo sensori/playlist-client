@@ -125,25 +125,39 @@ function getPosts(){
 }
 
 function getMembersCallback(response){  
-  var membersData = JSON.parse(response); // array of JSON'ed posts
-  console.log(membersData);
-  var memberList = document.getElementById("memberList");   
+  if (responseErrorCheck(response) == false){
+    var membersData = JSON.parse(response); // array of JSON'ed posts
+    console.log(membersData);
+    var memberList = document.getElementById("memberList");   
 
-  for (var i = 0; i < membersData.length; i++){    
-    var listOption = document.createElement("option");
-    listOption.textContent = membersData[i].name;
-    listOption.value = membersData[i].id;
-    memberList.appendChild(listOption);
+    for (var i = 0; i < membersData.length; i++){    
+      var listOption = document.createElement("option");
+      listOption.textContent = membersData[i].name;
+      listOption.value = membersData[i].id;
+      memberList.appendChild(listOption);
+    }
+    $('.combobox').combobox();
   }
-  $('.combobox').combobox();
 }
 
-function getPostsCallback(response){
-  console.log('postData: ' + response);
-  var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
-  var postData = responseData.data;
-  var soundCloudLinks = [];
-  var ctr = 0;  
+  function getPostsCallback(response){
+    // check for errors
+    if (responseErrorCheck(response) == false){
+      console.log('postData: ' + response);
+      var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
+      var postData = responseData.data;
+      var soundCloudLinks = [];
+      var ctr = 0;  
+    }
+  }
+
+  function responseErrorCheck(response){
+    if (res.error != null && res.error.message) {
+      console.log(res.error.message);
+      return true;
+    }
+    return false;
+  }
 
   // // check if we have paged results  
   // if (responseData.paging.next != null) {
