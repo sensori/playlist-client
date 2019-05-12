@@ -124,6 +124,14 @@ function getPosts(){
   var request = httpGetAsync(theUrl, getPostsCallback)
 }
 
+function responseErrorCheck(response){
+  if (res.error != null && res.error.message) {
+    console.log(res.error.message);
+    return true;
+  }
+  return false;
+}
+
 function getMembersCallback(response){  
   if (responseErrorCheck(response) == false){
     var membersData = JSON.parse(response); // array of JSON'ed posts
@@ -140,55 +148,55 @@ function getMembersCallback(response){
   }
 }
 
-  function getPostsCallback(response){
-    // check for errors
-    if (responseErrorCheck(response) == true){
-      console.log("error: " + response);
-      return;
+function getPostsCallback(response){
+  // check for errors
+  if (responseErrorCheck(response) == true){
+    console.log("error: " + response);
+    return;
+  }
+  console.log('postData: ' + response);
+  var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
+  var postData = responseData.data;
+  var soundCloudLinks = [];
+  var ctr = 0;  
+
+// // check if we have paged results  
+// if (responseData.paging.next != null) {
+//   // if so, request the next page
+//   var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
+//   theUrl += "?nextpage=" + responseData.paging.next; // send back the graph request for the next page
+//   var request = httpGetAsync(theUrl, getPostsCallback);
+// }
+postData.forEach(function (post){
+  console.log('song links: ' + post.links);
+  if (post.link != null && post.link.includes('soundcloud.com')) {
+    if (selectedMemberId == "" || 
+    (selectedMemberId != "" && selectedMemberId == post.from.id)) { // filter by member ID if user has selected one
+      soundCloudLinks.push(post.link);      
+      
+      var div = document.createElement("div");            
+      div.id = ctr.toString(); // so we know sequentially which div this is
+      divCollection.push(div); // keep a collection of divs to play sequentially
+      widgetToDiv[post.link] = div; // add div to the dictionary for async access to correct div
+
+      SC.oEmbed(post.link, {maxheight: 200}, function(res) { // async call
+        // set the new divs html, bind to events, and save reference to widget
+        var widgetDiv = widgetToDiv[post.link];
+        widgetDiv.innerHTML = res.html;
+        var widget = SC.Widget(widgetDiv.children[0]);
+        widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(post.link)});
+        // if (parseInt(widgetDiv.id) == 0){ // may not need this?
+        //   widget.bind(SC.Widget.Events.READY, firstWidgetReady);
+        // }
+        scWidgets[widgetDiv.id] = widget; // tie the widget to div's ID
+      });
+      document.getElementById("player").appendChild(div);
+      ctr++;
     }
-    console.log('postData: ' + response);
-    var responseData = JSON.parse(response); // array of JSON'ed posts; feed object from facebook API
-    var postData = responseData.data;
-    var soundCloudLinks = [];
-    var ctr = 0;  
+  }    
+});
+console.log('song links: ' + soundCloudLinks);
 
-  // // check if we have paged results  
-  // if (responseData.paging.next != null) {
-  //   // if so, request the next page
-  //   var theUrl = "https://peaceful-plateau-86783.herokuapp.com/getPosts"
-  //   theUrl += "?nextpage=" + responseData.paging.next; // send back the graph request for the next page
-  //   var request = httpGetAsync(theUrl, getPostsCallback);
-  // }
-  postData.forEach(function (post){
-    console.log('song links: ' + post.links);
-    if (post.link != null && post.link.includes('soundcloud.com')) {
-      if (selectedMemberId == "" || 
-      (selectedMemberId != "" && selectedMemberId == post.from.id)) { // filter by member ID if user has selected one
-        soundCloudLinks.push(post.link);      
-        
-        var div = document.createElement("div");            
-        div.id = ctr.toString(); // so we know sequentially which div this is
-        divCollection.push(div); // keep a collection of divs to play sequentially
-        widgetToDiv[post.link] = div; // add div to the dictionary for async access to correct div
-
-        SC.oEmbed(post.link, {maxheight: 200}, function(res) { // async call
-          // set the new divs html, bind to events, and save reference to widget
-          var widgetDiv = widgetToDiv[post.link];
-          widgetDiv.innerHTML = res.html;
-          var widget = SC.Widget(widgetDiv.children[0]);
-          widget.bind(SC.Widget.Events.FINISH, function (){widgetFinished(post.link)});
-          // if (parseInt(widgetDiv.id) == 0){ // may not need this?
-          //   widget.bind(SC.Widget.Events.READY, firstWidgetReady);
-          // }
-          scWidgets[widgetDiv.id] = widget; // tie the widget to div's ID
-        });
-        document.getElementById("player").appendChild(div);
-        ctr++;
-      }
-    }    
-  });
-  console.log('song links: ' + soundCloudLinks);
-  
 // function firstWidgetReady(){
 //   scWidgets[0].play();
 // }
