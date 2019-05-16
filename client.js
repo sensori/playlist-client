@@ -182,7 +182,7 @@ postData.forEach(function (post){
       divCollection.push(div); // keep a collection of divs to play sequentially
       widgetToDiv[post.link] = div; // add div to the dictionary for async access to correct div
 
-      SC.oEmbed(proxyurl + post.link, {maxheight: 200}, function(res) { // async call
+      SC.oEmbed(proxyUrl + post.link, {maxheight: 200}, function(res) { // async call
         // set the new divs html, bind to events, and save reference to widget
         var widgetDiv = widgetToDiv[post.link];
         widgetDiv.innerHTML = res.html;
