@@ -41,6 +41,7 @@ var divCollection = []; // array of divs
 var selectedMemberId = "";  // holds the ID of the selected group member
 var memberSelected = false; // flag to check if user filtered by group member
 
+const proxyurl = "https://cors-anywhere.herokuapp.com/";
   // initialization
   SC.initialize({
     client_id: "15c5a12b5d640af73b16bd240753ffbb"
@@ -169,8 +170,8 @@ function getPostsCallback(response){
 //   var request = httpGetAsync(theUrl, getPostsCallback);
 // }
 postData.forEach(function (post){
-  console.log('song links: ' + post.links);
   if (post.link != null && post.link.includes('soundcloud.com')) {
+    console.log('song links: ' + post.link);
     if (selectedMemberId == "" || 
     (selectedMemberId != "" && selectedMemberId == post.from.id)) { // filter by member ID if user has selected one
       soundCloudLinks.push(post.link);      
@@ -180,7 +181,7 @@ postData.forEach(function (post){
       divCollection.push(div); // keep a collection of divs to play sequentially
       widgetToDiv[post.link] = div; // add div to the dictionary for async access to correct div
 
-      SC.oEmbed(post.link, {maxheight: 200}, function(res) { // async call
+      SC.oEmbed(proxyurl + post.link, {maxheight: 200}, function(res) { // async call
         // set the new divs html, bind to events, and save reference to widget
         var widgetDiv = widgetToDiv[post.link];
         widgetDiv.innerHTML = res.html;
